@@ -24,7 +24,7 @@ public class EntityDisguise {
 	@Listener
 	public void onEnable(GameStartingServerEvent event){
 		PLUGIN = this;
-		GAME.getCommandDispatcher().register(this, new EntityDisguiseCommand(), "EntityDisguse", "ED");
+		GAME.getCommandDispatcher().register(this, new EntityDisguiseCommand(), "EntityDisguise", "ED");
 		GAME.getEventManager().registerListeners(this, new Listeners());
 	}
 	

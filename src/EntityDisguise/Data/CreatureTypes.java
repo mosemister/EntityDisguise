@@ -31,7 +31,7 @@ public enum CreatureTypes {
 	
 	public static EntityType getType(String name){
 		for(CreatureTypes type : CreatureTypes.values()){
-			if (type.name().equals(name)){
+			if (type.name().equalsIgnoreCase(name)){
 				return type.TYPE;
 			}
 		}

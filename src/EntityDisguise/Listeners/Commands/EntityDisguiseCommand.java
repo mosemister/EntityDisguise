@@ -17,7 +17,7 @@ public class EntityDisguiseCommand extends EDCommand{
 
 	@Override
 	public boolean runPlayerCommand(Player player, String[] args) {
-		if (args.length >1){
+		if (args.length > 1){
 			if (args[0].equalsIgnoreCase("disguise")){
 				if (args.length >= 2){
 					EntityType type = CreatureTypes.getType(args[1]);
@@ -50,7 +50,7 @@ public class EntityDisguiseCommand extends EDCommand{
 		Optional<DisguisedPlayer> disguised = DisguisedPlayer.getDisguise(player);
 		if (disguised.isPresent()){
 			disguised.get().setDisguiseType(type);
-			disguised.get().updateDisguise();
+			disguised.get().pushDisguise();
 		}else{
 			DisguisedPlayer disguise = new DisguisedPlayer(player, type);
 			disguise.pushDisguise();

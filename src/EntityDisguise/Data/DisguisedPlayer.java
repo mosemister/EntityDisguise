@@ -9,6 +9,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
 
 import EntityDisguise.EntityDisguise;
 
@@ -25,11 +26,13 @@ public class DisguisedPlayer {
 	
 	public DisguisedPlayer(Player player){
 		PLAYER = player;
+		DISGUISED.add(this);
 	}
 	
 	public DisguisedPlayer(Player player, EntityType type) {
 		PLAYER = player;
 		TYPE = type;
+		DISGUISED.add(this);
 	}
 
 	public Player getPlayer(){
@@ -57,7 +60,8 @@ public class DisguisedPlayer {
 	}
 	
 	public boolean pushDisguise(){
-		if (TYPE != null){
+		if (TYPE == null){
+			PLAYER.sendMessage(EntityDisguise.getTextFormat("Something went wrong (null TYPE)", true));
 			return false;
 		}
 		if (DISGUISE != null){
@@ -77,6 +81,7 @@ public class DisguisedPlayer {
 			Set<UUID> data2 = Sets.newConcurrentHashSet();
 			data2.add(PLAYER.getUniqueId());
 			DISGUISE.offer(Keys.INVISIBLE_TO_PLAYER_IDS, data2)*/;
+			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.of(EntityDisguise.getPlugin()));
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are now disguised as a " + TYPE.getName(), false));
 			return true;
 		}
@@ -94,7 +99,7 @@ public class DisguisedPlayer {
 		return false;
 	}
 	
-	public boolean updateDisguise(){
+	public boolean updateDisguiseLocation(){
 		if (DISGUISE != null){
 			DISGUISE.setLocationSafely(PLAYER.getLocation());
 			DISGUISE.setRotation(PLAYER.getRotation());
