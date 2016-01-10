@@ -2,19 +2,16 @@ package EntityDisguise.Data;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
+import java.util.Optional;
 
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 
 import EntityDisguise.EntityDisguise;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 public class DisguisedPlayer {
 	
@@ -41,7 +38,7 @@ public class DisguisedPlayer {
 	
 	public Optional<EntityType> getDisguiseType(){
 		if (TYPE == null){
-			return Optional.absent();
+			return Optional.empty();
 		}else{
 			return Optional.of(TYPE);
 		}
@@ -53,7 +50,7 @@ public class DisguisedPlayer {
 
 	public Optional<Entity> getDisguise(){
 		if (DISGUISE == null){
-			return Optional.absent();
+			return Optional.empty();
 		}else{
 			return Optional.of(DISGUISE);
 		}
@@ -71,16 +68,10 @@ public class DisguisedPlayer {
 		if (oEntity.isPresent()){
 			Entity entity = oEntity.get();
 			DISGUISE = entity;
-			Set<UUID> data = Sets.newConcurrentHashSet();
-			for(Player player : EntityDisguise.getPlugin().getGame().getServer().getOnlinePlayers()){
-				if (player != PLAYER){
-					data.add(player.getUniqueId());
-				}
+			PLAYER.offer(Keys.INVISIBLE, true);
+			if (entity instanceof Living){
+				entity.offer(Keys.AI_ENABLED, false);
 			}
-			/*PLAYER.offer(Keys.INVISIBLE_TO_PLAYER_IDS, data);
-			Set<UUID> data2 = Sets.newConcurrentHashSet();
-			data2.add(PLAYER.getUniqueId());
-			DISGUISE.offer(Keys.INVISIBLE_TO_PLAYER_IDS, data2)*/;
 			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.of(EntityDisguise.getPlugin()));
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are now disguised as a " + TYPE.getName(), false));
 			return true;
@@ -93,9 +84,10 @@ public class DisguisedPlayer {
 		if (DISGUISE != null){
 			DISGUISE.remove();
 			DISGUISE = null;
-			PLAYER.remove(Keys.INVISIBLE_TO_PLAYER_IDS);
+			PLAYER.remove(Keys.INVISIBLE);
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are no longer disguised", false));
 		}
+		DISGUISED.remove(this);
 		return false;
 	}
 	
@@ -117,6 +109,6 @@ public class DisguisedPlayer {
 				return Optional.of(dis);
 			}
 		}
-		return Optional.absent();
+		return Optional.empty();
 	}
 }

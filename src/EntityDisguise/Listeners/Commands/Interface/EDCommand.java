@@ -3,17 +3,15 @@ package EntityDisguise.Listeners.Commands.Interface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import org.spongepowered.api.command.CommandCallable;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandCallable;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.command.source.ConsoleSource;
-
-import com.google.common.base.Optional;
 
 public abstract class EDCommand implements CommandCallable{
 
@@ -31,12 +29,12 @@ public abstract class EDCommand implements CommandCallable{
 	
 	@Override
 	public Optional<? extends Text> getHelp(CommandSource arg0) {
-		return Optional.of(Texts.of("All EntityDisguised commands"));
+		return Optional.of(Text.of("All EntityDisguised commands"));
 	}
 
 	@Override
 	public Optional<? extends Text> getShortDescription(CommandSource arg0) {
-		return Optional.of(Texts.of("All EntityDisguised commands"));
+		return Optional.of(Text.of("All EntityDisguised commands"));
 	}
 
 	@Override
@@ -46,15 +44,19 @@ public abstract class EDCommand implements CommandCallable{
 
 	@Override
 	public Text getUsage(CommandSource arg0) {
-		return Texts.of(getUsage());
+		return Text.of(getUsage());
 	}
 
 	@Override
 	public CommandResult process(CommandSource arg0, String arg1) throws CommandException {
 		String[] args = arg1.split(" ");
+		System.out.println("running entity disguise command");
 		if (arg0 instanceof Player){
+			System.out.println("commandsource is player");
 			if (hasPermission((Player)arg0)){
+				System.out.println("has permission");
 				if (runPlayerCommand((Player)arg0, args)){
+					System.out.println("success");
 					CommandResult.success();
 				}
 			}

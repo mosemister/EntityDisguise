@@ -1,15 +1,14 @@
 package EntityDisguise.Listeners.Commands;
 
+import java.util.Optional;
+
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.command.source.ConsoleSource;
-
-import com.google.common.base.Optional;
 
 import EntityDisguise.EntityDisguise;
-import EntityDisguise.Data.CreatureTypes;
 import EntityDisguise.Data.DisguisedPlayer;
 import EntityDisguise.Listeners.Commands.Interface.EDCommand;
 
@@ -17,32 +16,34 @@ public class EntityDisguiseCommand extends EDCommand{
 
 	@Override
 	public boolean runPlayerCommand(Player player, String[] args) {
-		if (args.length > 1){
-			if (args[0].equalsIgnoreCase("disguise")){
-				if (args.length >= 2){
-					EntityType type = CreatureTypes.getType(args[1]);
-					if (type == null){
-						player.sendMessage(EntityDisguise.getTextFormat("EntityType is currently not supported", false));
-						return false;
+		System.out.println("command found");
+		if (args[0].equalsIgnoreCase("disguise")){
+			if (args.length >= 2){
+				Optional<EntityType> type = EntityDisguise.getType(args[1]);
+				if (!type.isPresent()){
+					player.sendMessage(EntityDisguise.getTextFormat("EntityType is currently not supported", false));
+					return false;
+				}else{
+					if (player.hasPermission("entitydisguise.disguise." + type.get().getName().toLowerCase()) || hasPermission(player)){
+						disguise(player, type.get());
+						return true;
 					}else{
-						if (player.hasPermission("entitydisguise.disguise." + type.getName().toLowerCase()) || hasPermission(player)){
-							disguise(player, type);
-							return true;
-						}else{
-							player.sendMessage(EntityDisguise.getTextFormat("Permission missmatch", true));
-						}
+						player.sendMessage(EntityDisguise.getTextFormat("Permission missmatch", true));
 					}
 				}
-			}else if (args[0].equalsIgnoreCase("remove")){
-				remove(player);
-			}else if (args[0].equalsIgnoreCase("EList")){
-				listEntity(player);
-			}else if (args[0].equalsIgnoreCase("DList")){
-				listDisguised(player);
 			}
-		}else{
-			displayHelp(player);
+		}else if (args[0].equalsIgnoreCase("remove")){
+			remove(player);
+			return true;
+		}else if (args[0].equalsIgnoreCase("EList")){
+			System.out.println("EList");
+			listEntity(player);
+			return true;
+		}else if (args[0].equalsIgnoreCase("DList")){
+			listDisguised(player);
+			return true;
 		}
+		displayHelp(player);
 		return false;
 	}
 	
@@ -69,26 +70,28 @@ public class EntityDisguiseCommand extends EDCommand{
 	
 	void listDisguised(Player player){
 		for (DisguisedPlayer player2 : DisguisedPlayer.getDisguises()){
-			player.sendMessage(Texts.builder(player2.getPlayer().getName()).color(TextColors.AQUA).build());
+			player.sendMessage(Text.builder(player2.getPlayer().getName()).color(TextColors.AQUA).build());
 		}
 	}
 	
 	void listEntity(Player player){
-		for(CreatureTypes type : CreatureTypes.values()){
-			player.sendMessage(Texts.builder(type.getType().getName()).color(TextColors.AQUA).build());
+		for(EntityType type : EntityDisguise.getTypes()){
+			System.out.println("displaying " + type.getName() + " to " + player.getName());
+			player.sendMessage(Text.builder(type.getName()).color(TextColors.AQUA).build());
 		}
 	}
 	
 	void displayHelp(Player player){
-		player.sendMessage(Texts.builder("/ED disguise <EntityType>").color(TextColors.GOLD).append(Texts.builder(": disguises you as the entity").color(TextColors.AQUA).build()).build());
-		player.sendMessage(Texts.builder("/ED remove <EntityType>").color(TextColors.GOLD).append(Texts.builder(": removes the disguise").color(TextColors.AQUA).build()).build());
-		player.sendMessage(Texts.builder("/ED EList").color(TextColors.GOLD).append(Texts.builder(": List the EntityTypes allowed").color(TextColors.AQUA).build()).build());
-		player.sendMessage(Texts.builder("/ED DList").color(TextColors.GOLD).append(Texts.builder(": List the disguised players").color(TextColors.AQUA).build()).build());
+		player.sendMessage(Text.builder("/ED disguise <EntityType>").color(TextColors.GOLD).append(Text.builder(": disguises you as the entity").color(TextColors.AQUA).build()).build());
+		player.sendMessage(Text.builder("/ED remove <EntityType>").color(TextColors.GOLD).append(Text.builder(": removes the disguise").color(TextColors.AQUA).build()).build());
+		player.sendMessage(Text.builder("/ED EList").color(TextColors.GOLD).append(Text.builder(": List the EntityTypes allowed").color(TextColors.AQUA).build()).build());
+		player.sendMessage(Text.builder("/ED DList").color(TextColors.GOLD).append(Text.builder(": List the disguised players").color(TextColors.AQUA).build()).build());
 	}
 
 	@Override
 	public boolean hasPermission(Player player) {
-		return player.hasPermission("EntityDisguise.*");
+		//return player.hasPermission("EntityDisguise.*");
+		return true;
 	}
 
 	@Override
