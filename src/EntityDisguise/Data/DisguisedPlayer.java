@@ -10,6 +10,8 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 
 import EntityDisguise.EntityDisguise;
 
@@ -72,7 +74,7 @@ public class DisguisedPlayer {
 			if (entity instanceof Living){
 				entity.offer(Keys.AI_ENABLED, false);
 			}
-			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.of(EntityDisguise.getPlugin()));
+			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.source(EntityDisguise.getPlugin().getGame().getRegistry().createBuilder(SpawnCause.Builder.class).type(SpawnTypes.CUSTOM).build()).named("EntityDisguise", this).build());
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are now disguised as a " + TYPE.getName(), false));
 			return true;
 		}

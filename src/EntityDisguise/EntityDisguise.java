@@ -16,7 +16,7 @@ import EntityDisguise.Listeners.Commands.EntityDisguiseCommand;
 
 import com.google.inject.Inject;
 
-@Plugin(id = "EDisguise", name = "EntityDisguise", version="0.3 Alpha")
+@Plugin(id = "EDisguise", name = "EntityDisguise", version="0.4 Alpha")
 public class EntityDisguise {
 	
 	@Inject
