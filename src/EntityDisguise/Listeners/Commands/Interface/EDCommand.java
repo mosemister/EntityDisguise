@@ -1,7 +1,6 @@
 package EntityDisguise.Listeners.Commands.Interface;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +11,8 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 public abstract class EDCommand implements CommandCallable{
 
@@ -28,18 +29,18 @@ public abstract class EDCommand implements CommandCallable{
 	}
 	
 	@Override
-	public Optional<? extends Text> getHelp(CommandSource arg0) {
+	public Optional<Text> getHelp(CommandSource arg0) {
 		return Optional.of(Text.of("All EntityDisguised commands"));
+	}
+	
+	@Override
+	public List<String> getSuggestions(CommandSource arg0, String arg1, Location<World> arg2) throws CommandException {
+		return new ArrayList<>();
 	}
 
 	@Override
-	public Optional<? extends Text> getShortDescription(CommandSource arg0) {
+	public Optional<Text> getShortDescription(CommandSource arg0) {
 		return Optional.of(Text.of("All EntityDisguised commands"));
-	}
-
-	@Override
-	public List<String> getSuggestions(CommandSource arg0, String arg1) throws CommandException {
-		return Collections.emptyList();
 	}
 
 	@Override
@@ -50,13 +51,9 @@ public abstract class EDCommand implements CommandCallable{
 	@Override
 	public CommandResult process(CommandSource arg0, String arg1) throws CommandException {
 		String[] args = arg1.split(" ");
-		System.out.println("running entity disguise command");
 		if (arg0 instanceof Player){
-			System.out.println("commandsource is player");
 			if (hasPermission((Player)arg0)){
-				System.out.println("has permission");
 				if (runPlayerCommand((Player)arg0, args)){
-					System.out.println("success");
 					CommandResult.success();
 				}
 			}

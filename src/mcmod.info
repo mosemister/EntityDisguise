@@ -1,0 +1,9 @@
+[{
+    "modid": "edisguise",
+    "name": "EntityDisguise",
+    "version": "0.5",
+    "description": "A simple lightweight plugin that allows players to disguise themselves as Entities",
+    "authorList": [
+        "MoseMister"
+    ]
+}]

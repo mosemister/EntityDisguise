@@ -1,7 +1,6 @@
 package EntityDisguise.Data;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Optional;
 
 import org.spongepowered.api.data.key.Keys;
@@ -14,6 +13,7 @@ import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 
 import EntityDisguise.EntityDisguise;
+import EntityDisguise.Permissions;
 
 public class DisguisedPlayer {
 	
@@ -21,7 +21,7 @@ public class DisguisedPlayer {
 	EntityType TYPE;
 	Entity DISGUISE;
 	
-	static Collection<DisguisedPlayer> DISGUISED = new ArrayList<DisguisedPlayer>();
+	static ArrayList<DisguisedPlayer> DISGUISED = new ArrayList<DisguisedPlayer>();
 	
 	public DisguisedPlayer(Player player){
 		PLAYER = player;
@@ -46,8 +46,12 @@ public class DisguisedPlayer {
 		}
 	}
 	
-	public void setDisguiseType(EntityType type){
-		TYPE = type;
+	public boolean setDisguiseType(EntityType type){
+		if(Permissions.hasPermission(PLAYER, type)){
+			TYPE = type;
+			return true;
+		}
+		return false;
 	}
 
 	public Optional<Entity> getDisguise(){
@@ -71,10 +75,11 @@ public class DisguisedPlayer {
 			Entity entity = oEntity.get();
 			DISGUISE = entity;
 			PLAYER.offer(Keys.INVISIBLE, true);
+			PLAYER.offer(Keys.VANISH, true);
 			if (entity instanceof Living){
 				entity.offer(Keys.AI_ENABLED, false);
 			}
-			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.source(EntityDisguise.getPlugin().getGame().getRegistry().createBuilder(SpawnCause.Builder.class).type(SpawnTypes.CUSTOM).build()).named("EntityDisguise", this).build());
+			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.source(EntityDisguise.getPlugin().getGame().getRegistry().createBuilder(SpawnCause.Builder.class).type(SpawnTypes.CUSTOM).build()).named(EntityDisguise.ID, this).build());
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are now disguised as a " + TYPE.getName(), false));
 			return true;
 		}
@@ -86,7 +91,8 @@ public class DisguisedPlayer {
 		if (DISGUISE != null){
 			DISGUISE.remove();
 			DISGUISE = null;
-			PLAYER.remove(Keys.INVISIBLE);
+			PLAYER.offer(Keys.INVISIBLE, false);
+			PLAYER.offer(Keys.VANISH, false);
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are no longer disguised", false));
 		}
 		DISGUISED.remove(this);
@@ -95,13 +101,14 @@ public class DisguisedPlayer {
 	
 	public boolean updateDisguiseLocation(){
 		if (DISGUISE != null){
-			DISGUISE.setLocationSafely(PLAYER.getLocation());
+			DISGUISE.setLocation(PLAYER.getLocation());			
+			//DISGUISE.offer(Keys.VELOCITY, PLAYER.getVelocity());
 			DISGUISE.setRotation(PLAYER.getRotation());
 		}
 		return false;
 	}
 	
-	public static Collection<DisguisedPlayer> getDisguises(){
+	public static ArrayList<DisguisedPlayer> getDisguises(){
 		return DISGUISED;
 	}
 	

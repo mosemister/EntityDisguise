@@ -16,8 +16,12 @@ import EntityDisguise.Listeners.Commands.EntityDisguiseCommand;
 
 import com.google.inject.Inject;
 
-@Plugin(id = "EDisguise", name = "EntityDisguise", version="0.4 Alpha")
+@Plugin(id = EntityDisguise.ID, name = EntityDisguise.NAME, version = EntityDisguise.VERSION)
 public class EntityDisguise {
+	
+	public static final String ID = "edisguise";
+	public static final String NAME = "EntityDisguise";
+	public static final String VERSION = "0.5 Alpha";
 	
 	@Inject
 	Game GAME;
