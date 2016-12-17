@@ -70,16 +70,16 @@ public class DisguisedPlayer {
 		if (DISGUISE != null){
 			DISGUISE.remove();
 		}
-		Optional<Entity> oEntity = PLAYER.getWorld().createEntity(TYPE, PLAYER.getLocation().getBlockPosition());
-		if (oEntity.isPresent()){
-			Entity entity = oEntity.get();
+		Entity oEntity = PLAYER.getWorld().createEntity(TYPE, PLAYER.getLocation().getBlockPosition());
+		if (oEntity.isLoaded()){
+			Entity entity = oEntity;
 			DISGUISE = entity;
 			PLAYER.offer(Keys.INVISIBLE, true);
 			PLAYER.offer(Keys.VANISH, true);
 			if (entity instanceof Living){
 				entity.offer(Keys.AI_ENABLED, false);
 			}
-			PLAYER.getWorld().spawnEntity(oEntity.get(), Cause.source(EntityDisguise.getPlugin().getGame().getRegistry().createBuilder(SpawnCause.Builder.class).type(SpawnTypes.CUSTOM).build()).named(EntityDisguise.ID, this).build());
+			PLAYER.getWorld().spawnEntity(oEntity, Cause.source(EntityDisguise.getPlugin().getGame().getRegistry().createBuilder(SpawnCause.Builder.class).type(SpawnTypes.CUSTOM).build()).named(EntityDisguise.ID, this).build());
 			PLAYER.sendMessage(EntityDisguise.getTextFormat("You are now disguised as a " + TYPE.getName(), false));
 			return true;
 		}
