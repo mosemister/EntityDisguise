@@ -2,6 +2,7 @@ package org.entitydisguise.entitydisguiseplugin.disguise.command;
 
 import org.entitydisguise.entitydisguiseplugin.EntityDisguisePlugin;
 import org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.EntityKeyArgument;
+import org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.EntityKeyValueArgument;
 import org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.EntityTypeArgument;
 import org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.argumentParse.Parser;
 import org.entitydisguise.entitydisguiseplugin.disguise.data.EntityDisguiseKeys;
@@ -62,51 +63,25 @@ public class DisguiseCommand {
                 throw new CommandException(Text.of("You don't have the DisguiseEntity data put on your player. disconnect and reconnect to fix this."));
             }
             DisguiseEntity disguise = opDisguise.get();
-            if(!disguise.getEntity().isPresent()) {
-                throw new CommandException(Text.of("Disguise not found"));
-            }
-            Entity entity = disguise.getEntity().get();
+
             Optional<Key<BaseValue<Object>>> opKey = args.getOne(KEY);
             if (!opKey.isPresent()) {
                 throw new CommandException(Text.of("Unknown Key"));
             }
-            Optional<String> opValue = args.getOne(KEY_VALUE);
+            Key<BaseValue<Object>> key = opKey.get();
+
+            Optional<Object> opValue = args.getOne(KEY_VALUE);
             if(!opValue.isPresent()){
                 throw new CommandException(Text.of("Unknown Value"));
             }
-            Key<? extends BaseValue<Object>> key = opKey.get();
-            Optional<? extends Object> opCurrent = entity.get(key);
-            Class<? extends Object> currentClass;
-            if(opCurrent.isPresent()) {
-                currentClass = opCurrent.get().getClass();
-            }else{
-                currentClass = getDefaultClass(key.getId());
-                if(currentClass == null) {
-                    if (key.getId().startsWith("sponge:")) {
-                        throw new CommandException(Text.of("Unknown default value. Please specifiy this to the developer of EntityDisguise for a fix"));
-                    } else {
-                        throw new CommandException(Text.of("Unknown default value."));
-                    }
-                }
-            }
-            Optional<? extends Parser<?>> parser = Parser.getParser(currentClass);
-            if(!parser.isPresent()){
-                throw new CommandException(Text.of("Key value is not supported by EntityDisguise yet"));
-            }
-            Object obj = parser.get().parse(opValue.get());
+            Object obj = opValue.get();
+
             if (disguise.offer(key, obj)) {
                 src.sendMessage(Text.of(key.getName() + " has been set for your disguise"));
             }else{
                 src.sendMessage(Text.of(key.getName() + " is not supported for your disguise"));
             }
             return CommandResult.success();
-        }
-
-        private Class<? extends Object> getDefaultClass(String key){
-            if(key.equals(Keys.DISPLAY_NAME.getId())){
-                return Text.class;
-            }
-            return null;
         }
 
     }
@@ -170,7 +145,7 @@ public class DisguiseCommand {
     public static CommandCallable createCommands(){
         CommandSpec disguise = CommandSpec.builder().executor(new DisguiseCommand.DisguiseTypeCommand()).description(Text.of("disguise as a entity")).permission(EntityDisguisePlugin.PERMISSION_COMMAND_DISGUISE_ENTITY).arguments(GenericArguments.playerOrSource(PLAYER), new EntityTypeArgument(ENTITY_TYPE, false)).build();
         CommandSpec remove = CommandSpec.builder().executor(new DisguiseCommand.RemoveDisguiseCommand()).description(Text.of("remove disguise")).permission(EntityDisguisePlugin.PERMISSION_COMMAND_DISGUISE_ENTITY).arguments(GenericArguments.playerOrSource(PLAYER)).build();
-        CommandSpec key = CommandSpec.builder().executor(new DisguiseCommand.DisguiseKeysCommand()).description(Text.of("add detail to disguise")).permission(EntityDisguisePlugin.PERMISSION_COMMAND_DISGUISE_KEY).arguments(GenericArguments.playerOrSource(PLAYER), new EntityKeyArgument(KEY), GenericArguments.remainingJoinedStrings(KEY_VALUE)).build();
+        CommandSpec key = CommandSpec.builder().executor(new DisguiseCommand.DisguiseKeysCommand()).description(Text.of("add detail to disguise")).permission(EntityDisguisePlugin.PERMISSION_COMMAND_DISGUISE_KEY).arguments(GenericArguments.playerOrSource(PLAYER), new EntityKeyArgument(KEY), new EntityKeyValueArgument(KEY_VALUE)).build();
         return CommandSpec.builder().child(key, "disguisekey", "key").child(remove, "removedisguise", "remove").child(disguise, "disguiseas", "as").permission(EntityDisguisePlugin.PERMISSION_COMMAND_ALL).description(Text.of("Entity Disguise Commands")).build();
     }
 }

@@ -1,13 +1,20 @@
 package org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.argumentParse;
 
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class StringParser implements Parser<String> {
+public class StringParser extends AbstractParser<String> implements Parser<String> {
 
-    String[] limitedTo;
+    public StringParser(){
+        super();
+    }
 
-    public StringParser(String... limitedTo){
-        this.limitedTo = limitedTo;
+    public StringParser(Collection<Key<? extends BaseValue<String>>> collection, String... limitedTo){
+        super(collection, limitedTo);
     }
 
     @Override
@@ -22,16 +29,13 @@ public class StringParser implements Parser<String> {
 
     @Override
     public List<String> getSuggested(String value) {
-        return null;
+        List<String> suggestion = new ArrayList<>();
+        for(String limit : getLimitedTo()){
+            if(limit.contains(value)){
+                suggestion.add(limit);
+            }
+        }
+        return suggestion;
     }
 
-    @Override
-    public Parser<String> copy(String... limitedTo) {
-        return new StringParser(limitedTo);
-    }
-
-    @Override
-    public String[] getLimitedTo() {
-        return limitedTo;
-    }
 }

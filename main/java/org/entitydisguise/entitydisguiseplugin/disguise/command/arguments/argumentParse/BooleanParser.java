@@ -1,15 +1,22 @@
 package org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.argumentParse;
 
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.value.BaseValue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-public class BooleanParser implements Parser<Boolean> {
+public class BooleanParser extends AbstractParser<Boolean> implements Parser<Boolean> {
 
-    Boolean[] limitedTo;
+    public BooleanParser(){
+        super();
+    }
 
-    public BooleanParser(Boolean... limitedTo){
-        this.limitedTo = limitedTo;
+    public BooleanParser(Collection<Key<? extends BaseValue<Boolean>>> keys, Boolean... limitedTo){
+        super(keys, limitedTo);
     }
 
     @Override
@@ -30,15 +37,5 @@ public class BooleanParser implements Parser<Boolean> {
             return Arrays.asList("false");
         }
         return new ArrayList<>();
-    }
-
-    @Override
-    public Parser<Boolean> copy(Boolean... limitedTo) {
-        return new BooleanParser(limitedTo);
-    }
-
-    @Override
-    public Boolean[] getLimitedTo() {
-        return limitedTo;
     }
 }

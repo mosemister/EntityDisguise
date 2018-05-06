@@ -1,17 +1,22 @@
 package org.entitydisguise.entitydisguiseplugin.disguise.command.arguments.argumentParse;
 
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class IntegerParser implements Parser<Integer> {
+public class IntegerParser extends AbstractParser<Integer> implements Parser<Integer> {
 
-    Integer[] limitedTo;
+    public IntegerParser(){
+        limitedTo = new Integer[0];
+    }
 
-    public IntegerParser(Integer... limitedTo){
-        this.limitedTo = limitedTo;
+    public IntegerParser(Collection<Key<? extends BaseValue<Integer>>> collection, Integer... limitedTo){
+        super(collection, limitedTo);
     }
 
     @Override
@@ -33,13 +38,4 @@ public class IntegerParser implements Parser<Integer> {
         return new ArrayList<>();
     }
 
-    @Override
-    public Parser<Integer> copy(Integer... limitedTo) {
-        return new IntegerParser(limitedTo);
-    }
-
-    @Override
-    public Integer[] getLimitedTo() {
-        return limitedTo;
-    }
 }

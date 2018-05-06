@@ -23,17 +23,8 @@ import java.util.*;
 
 public class EntityKeyArgument extends CommandElement {
 
-    DisguiseEntity entity;
-    List<Parser<? extends Object>> limitedTo;
-
-    public EntityKeyArgument(Text key, Parser<? extends Object>... parsers){
-        this(key, null, parsers);
-    }
-
-    public EntityKeyArgument(Text key, @Nullable DisguiseEntity entity, Parser<? extends Object>... parsers) {
+    public EntityKeyArgument(Text key) {
         super(key);
-        this.entity = entity;
-        this.limitedTo = Arrays.asList(parsers);
     }
 
     @Nullable
@@ -78,12 +69,7 @@ public class EntityKeyArgument extends CommandElement {
         return list;
     }
 
-    private <T extends Object> void test(){
-    }
-
     private DisguiseEntity getDisguise(CommandSource source, CommandArgs arg) throws ArgumentParseException{
-        DisguiseEntity entity = this.entity;
-        if(entity == null){
             if(source instanceof Player){
                 Player player = (Player)source;
                 Optional<DisguiseEntity> opDisguise = player.get(EntityDisguiseKeys.KEY_DISGUISE_ENTITY_SETTINGS);
@@ -93,7 +79,5 @@ public class EntityKeyArgument extends CommandElement {
                 throw arg.createError(Text.of("No disguise found"));
             }
             throw arg.createError(Text.of("Player required"));
-        }
-        return entity;
     }
 }

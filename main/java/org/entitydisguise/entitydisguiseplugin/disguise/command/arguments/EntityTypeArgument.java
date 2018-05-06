@@ -47,9 +47,7 @@ public class EntityTypeArgument extends CommandElement {
         try {
             String entityTypeString = args.peek();
             types.stream().filter(e -> entityTypeString.startsWith(e.getId())).forEach(e -> ret1.add(e.getId()));
-            types.stream().filter(e -> entityTypeString.startsWith(e.getName())).forEach(e -> ret1.add(e.getName()));
             types.stream().filter(e -> e.getId().contains(entityTypeString)).filter(e -> !ret1.stream().anyMatch(t -> t.equals(e.getId()))).forEach(e -> ret1.add(e.getId()));
-            types.stream().filter(e -> e.getName().contains(entityTypeString)).filter(e -> !ret1.stream().anyMatch(t -> t.equals(e.getName()))).forEach(e -> ret1.add(e.getName()));
         } catch (ArgumentParseException e) {
         }
         return ret1;
