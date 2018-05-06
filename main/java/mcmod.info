@@ -1,0 +1,15 @@
+[
+{
+    "modid": "entitydisguiseplugin",
+    "name": "Entity Disguise",
+    "version": "SNAPSHOT-0.1",
+    "mcversion": "1.12.2",
+    "description": "Disguise in to any mob",
+	"dependencies": [
+        "spongeapi@7.1.0-SNAPSHOT"
+    ],
+    "requiredMods": [
+        "spongeapi@7.1.0-SNAPSHOT"
+    ]
+}
+]
